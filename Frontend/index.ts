@@ -86,11 +86,8 @@ class Controller extends View
             return res.json()
         }).then(data=>{
             if(data.rowsAffected.length>=1){
-               
                 this.Create(newtodo);
-                this.readTodos();
-                console.log(data);
-                
+                this.readTodos(); 
                 window.alert("saved successfully")
             }
             else{
@@ -121,7 +118,6 @@ class Controller extends View
    }
    readTodos=():boolean=>{
        console.log("reading.....");
-       
     this.reload();
         State.Data.map(item=>{
            let div=document.createElement('div') as HTMLDivElement;
@@ -156,6 +152,8 @@ class Controller extends View
             else{
                 btndiv.appendChild(btndelete);
                 btndiv.appendChild(btncreate);
+               div.appendChild(btndiv);
+               this.Todos.appendChild(div);
                 btncreate.addEventListener('click',(e)=>{
                     State.Data=State.Data.map(item=>{
                         console.log(div.id);
@@ -168,6 +166,7 @@ class Controller extends View
                     this.readTodos(); 
                 })
                 btndelete.addEventListener('click',(e)=>{
+                    e.preventDefault();
                     fetch(`http://localhost:8001/${div.id}`,{
                         method: 'DELETE',
                         mode: 'cors',
@@ -191,18 +190,17 @@ class Controller extends View
     return true;
 } 
 }
+
+
 let con=new Controller();
-con.readTodos();
-
-
 
 class State{
     static Data:TodoInterface[]=[];
      constructor(){    
      }
      Gdata=()=>{
-         console.log("connecting");
-         
+
+         console.log("connecting");    
         fetch(`http://localhost:8001/`,{
             method: 'GET',
             mode: 'cors',
@@ -213,6 +211,7 @@ class State{
              State.Data=data;
              console.log(State.Data);
              con.readTodos();
+             
         })
         .catch(err=>{
             console.log(err);
@@ -222,7 +221,6 @@ class State{
         
     }
 }
-let state=new State();
-state.Gdata();
+let state=new State().Gdata();
 
-console.log(State.Data);
+

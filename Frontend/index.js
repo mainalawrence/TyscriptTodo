@@ -91,6 +91,8 @@ var Controller = /** @class */ (function (_super) {
                 else {
                     btndiv.appendChild(btndelete);
                     btndiv.appendChild(btncreate);
+                    div.appendChild(btndiv);
+                    _this.Todos.appendChild(div);
                     btncreate.addEventListener('click', function (e) {
                         State.Data = State.Data.map(function (item) {
                             console.log(div.id);
@@ -102,6 +104,7 @@ var Controller = /** @class */ (function (_super) {
                         _this.readTodos();
                     });
                     btndelete.addEventListener('click', function (e) {
+                        e.preventDefault();
                         fetch("http://localhost:8001/".concat(div.id), {
                             method: 'DELETE',
                             mode: 'cors'
@@ -158,7 +161,6 @@ var Controller = /** @class */ (function (_super) {
                     if (data.rowsAffected.length >= 1) {
                         _this.Create(newtodo_1);
                         _this.readTodos();
-                        console.log(data);
                         window.alert("saved successfully");
                     }
                     else {
@@ -178,7 +180,6 @@ var Controller = /** @class */ (function (_super) {
     return Controller;
 }(View));
 var con = new Controller();
-con.readTodos();
 var State = /** @class */ (function () {
     function State() {
         this.Gdata = function () {
@@ -201,6 +202,4 @@ var State = /** @class */ (function () {
     State.Data = [];
     return State;
 }());
-var state = new State();
-state.Gdata();
-console.log(State.Data);
+var state = new State().Gdata();
