@@ -13,13 +13,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var State = /** @class */ (function () {
-    function State() {
-        console.log("State Called");
-    }
-    State.Data = [];
-    return State;
-}());
 var View = /** @class */ (function () {
     function View() {
     }
@@ -64,6 +57,7 @@ var Controller = /** @class */ (function (_super) {
             }
         };
         _this.readTodos = function () {
+            console.log("reading.....");
             _this.reload();
             State.Data.map(function (item) {
                 var div = document.createElement('div');
@@ -108,11 +102,20 @@ var Controller = /** @class */ (function (_super) {
                         _this.readTodos();
                     });
                     btndelete.addEventListener('click', function (e) {
+                        fetch("http://localhost:8001/".concat(div.id), {
+                            method: 'DELETE',
+                            mode: 'cors'
+                        }).then(function (res) {
+                            return res.json();
+                        }).then(function (data) {
+                            _this.Delete(parseInt(div.id));
+                            _this.readTodos();
+                        })["catch"](function (err) {
+                            console.log(err);
+                        });
                         _this.Delete(parseInt(div.id));
                         _this.readTodos();
                     });
-                    div.appendChild(btndiv);
-                    _this.Todos.appendChild(div);
                 }
             });
             return true;
@@ -122,23 +125,52 @@ var Controller = /** @class */ (function (_super) {
         _this.textarea = document.getElementById('textarea');
         _this.date = document.getElementById('date');
         _this.form.addEventListener('submit', function (e) {
+            e.preventDefault();
             if (_this.title.value === "" || _this.textarea.value === "" || _this.date.value === "") {
                 window.alert("Can`t Create an Empty Todo");
             }
             else {
                 e.preventDefault();
-                var newtodo = {};
-                newtodo.complete = false;
-                newtodo.date = _this.date.value;
-                newtodo.details = _this.textarea.value;
-                newtodo.title = _this.title.value;
-                newtodo.id = State.Data.length + 1;
-                _this.Create(newtodo);
-                _this.readTodos();
+                var newtodo_1 = {};
+                newtodo_1.complete = false;
+                newtodo_1.date = _this.date.value;
+                newtodo_1.details = _this.textarea.value;
+                newtodo_1.title = _this.title.value;
+                newtodo_1.id = State.Data.length + 1;
+                fetch("http://localhost:8001/", {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        data: {
+                            id: newtodo_1.id,
+                            title: newtodo_1.title,
+                            details: newtodo_1.details,
+                            complete: newtodo_1.complete,
+                            mdate: newtodo_1.date
+                        }
+                    })
+                }).then(function (res) {
+                    return res.json();
+                }).then(function (data) {
+                    if (data.rowsAffected.length >= 1) {
+                        _this.Create(newtodo_1);
+                        _this.readTodos();
+                        console.log(data);
+                        window.alert("saved successfully");
+                    }
+                    else {
+                        window.alert("Failed Please Try again");
+                    }
+                })["catch"](function (err) {
+                    window.alert("Creating error" + err);
+                });
                 _this.title.value = "";
                 _this.textarea.value = "";
                 _this.date.value = "";
-                console.log(newtodo);
+                console.log(newtodo_1);
             }
         });
         return _this;
@@ -147,3 +179,28 @@ var Controller = /** @class */ (function (_super) {
 }(View));
 var con = new Controller();
 con.readTodos();
+var State = /** @class */ (function () {
+    function State() {
+        this.Gdata = function () {
+            console.log("connecting");
+            fetch("http://localhost:8001/", {
+                method: 'GET',
+                mode: 'cors'
+            }).then(function (res) {
+                return res.json();
+            }).then(function (data) {
+                State.Data = data;
+                console.log(State.Data);
+                con.readTodos();
+            })["catch"](function (err) {
+                console.log(err);
+            });
+            console.log("done connecting");
+        };
+    }
+    State.Data = [];
+    return State;
+}());
+var state = new State();
+state.Gdata();
+console.log(State.Data);
