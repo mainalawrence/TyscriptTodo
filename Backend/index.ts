@@ -24,14 +24,15 @@ app.get("/", async(req,res)=>{
 
 app.put("/:id",async(req,res)=>{
     const{id}=req.params;
-    const{data}=req.body;
+    console.log(id);
+    
     try {
         let pool=await sql.connect(sqlConfig);
         let result=await pool.request()
-        .query(`update todos   title=${data.title} ,details=${data.details},complete=${data.complete},mdate=${data.mdate} where id=${id}`);
-        return res.json(result);
-
+        .query(`update todos set complete=${1} where id=${id}`);
+        console.log(result);
         
+        return res.json(result);
     } catch (error) {
         
     }

@@ -94,19 +94,8 @@ var Controller = /** @class */ (function (_super) {
                     div.appendChild(btndiv);
                     _this.Todos.appendChild(div);
                     btncreate.addEventListener('click', function (e) {
-                        State.Data = State.Data.map(function (item) {
-                            console.log(div.id);
-                            if (item.id === parseInt(div.id)) {
-                                item.complete = !item.complete;
-                            }
-                            return item;
-                        });
-                        _this.readTodos();
-                    });
-                    btndelete.addEventListener('click', function (e) {
-                        e.preventDefault();
                         fetch("http://localhost:8001/".concat(div.id), {
-                            method: 'DELETE',
+                            method: 'PUT',
                             mode: 'cors'
                         }).then(function (res) {
                             return res.json();
@@ -117,6 +106,14 @@ var Controller = /** @class */ (function (_super) {
                             console.log(err);
                         });
                         _this.Delete(parseInt(div.id));
+                        _this.readTodos();
+                    });
+                    btndelete.addEventListener('click', function (e) {
+                        _this.readTodos();
+                        fetch("http://localhost:8001/".concat(div.id), {
+                            method: 'DELETE',
+                            mode: 'cors'
+                        });
                         _this.readTodos();
                     });
                 }

@@ -155,20 +155,9 @@ class Controller extends View
                div.appendChild(btndiv);
                this.Todos.appendChild(div);
                 btncreate.addEventListener('click',(e)=>{
-                    State.Data=State.Data.map(item=>{
-                        console.log(div.id);
-                        
-                        if(item.id===parseInt(div.id)){
-                            item.complete=!item.complete;
-                        }
-                        return item;
-                    })
-                    this.readTodos(); 
-                })
-                btndelete.addEventListener('click',(e)=>{
-                    e.preventDefault();
+                    
                     fetch(`http://localhost:8001/${div.id}`,{
-                        method: 'DELETE',
+                        method: 'PUT',
                         mode: 'cors',
                     }).then(res=>{
                         return res.json()
@@ -178,11 +167,20 @@ class Controller extends View
                     this.readTodos(); 
                     })
                     .catch(err=>{
-                        console.log(err);
-                        
+                        console.log(err); 
                     })
                     this.Delete(parseInt(div.id));
                     this.readTodos(); 
+                })
+                
+                btndelete.addEventListener('click',(e)=>{
+                    this.readTodos();
+                    fetch(`http://localhost:8001/${div.id}`,{
+                        method: 'DELETE',
+                        mode: 'cors',
+                    })
+                    this.readTodos();
+                    
                 })
                 
             }
