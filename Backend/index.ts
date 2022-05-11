@@ -4,7 +4,7 @@ import cores from 'cors';
 import sqlConfig from './Database'
 import sql from "mssql";
 dotenv.config();
-
+import emailService from './Emails/email'
 const app= express();
 app.use(cores())
 app.use(express.json());
@@ -54,14 +54,16 @@ app.delete("/:id",async(req,res)=>{
 })
 app.post("/",async(req,res)=>{
 try {
-    const {id,title,details,complete,mdate}=req.body.data;            
+    
+    const {id,title,details,complete,mdate,assignto}=req.body.data;    
+    console.log(req.body.data);
     let pool=await sql.connect(sqlConfig);
         let result=await pool.request()
-        .query(`insert into todos values(${id},'${title}','${details}',${complete ? 1:0},'${mdate}');`)
+        .query(`insert into todos values(${id},'${title}','${details}',${complete ? 1:0},'${mdate}','${assignto}');`)
         .catch(err=>{
-           
              res.json(err);
         })
+        await emailService(req.body.data);
         return res.json(result);
 
 } catch (error) { 

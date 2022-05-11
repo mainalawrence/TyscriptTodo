@@ -3,7 +3,8 @@ interface TodoInterface{
     title?:string,
     date?:string,
     details?:string,
-    complete?:boolean
+    complete?:boolean,
+    assignto?:string
 }
 
 class View{
@@ -43,6 +44,7 @@ class Controller extends View
     private date:HTMLInputElement;
     private Todos=document.getElementById("Todos") as HTMLDivElement;
     private complet=document.getElementById("complet") as HTMLDivElement;
+    private asignto:HTMLInputElement;
 
    constructor(){
     super();
@@ -51,8 +53,10 @@ class Controller extends View
     this.title=document.getElementById('title') as HTMLInputElement;
     this.textarea=document.getElementById('textarea') as HTMLInputElement;
     this.date=document.getElementById('date')as HTMLInputElement;
+    this.asignto=document.getElementById("asignto") as HTMLInputElement;
     this.form.addEventListener('submit',(e)=>{
         e.preventDefault();
+        
       if(this.title.value===""|| this.textarea.value ===""|| this.date.value==="")
       {
         window.alert("Can`t Create an Empty Todo");
@@ -61,10 +65,13 @@ class Controller extends View
         e.preventDefault();
         let newtodo:TodoInterface={};
         newtodo.complete=false;
+        newtodo.assignto=this.asignto.value;
         newtodo.date=this.date.value;
         newtodo.details=this.textarea.value;
         newtodo.title=this.title.value;
         newtodo.id=State.Data.length+1;
+        
+console.log("Asigned to :"+this.asignto.value);
 
         fetch(`http://localhost:8001/`,{
             method:'POST',
@@ -79,7 +86,8 @@ class Controller extends View
                 title:newtodo.title,
                 details:newtodo.details,
                 complete:newtodo.complete,
-                mdate:newtodo.date
+                mdate:newtodo.date,
+                assignto:newtodo.assignto
                       }
 }),
         }).then(res=>{
@@ -118,7 +126,7 @@ class Controller extends View
    }
    readTodos=():boolean=>{
        console.log("reading.....");
-    this.reload();
+       this.reload();
         State.Data.map(item=>{
            let div=document.createElement('div') as HTMLDivElement;
            div.id=`${item.id}`;
@@ -130,7 +138,7 @@ class Controller extends View
            let p=document.createElement('p') as HTMLElement;
            p.textContent=item.details;
            let small=document.createElement('small') as HTMLElement;
-           small.textContent=this.date.value+ "completed at "+Date().toString();
+           small.textContent= "completed at "+Date().toString();
            let btndiv=document.createElement('div') as HTMLDivElement;
            let btndelete=document.createElement('input') as HTMLInputElement
             btndelete.className="btnd";
@@ -174,12 +182,19 @@ class Controller extends View
                 })
                 
                 btndelete.addEventListener('click',(e)=>{
-                    this.readTodos();
                     fetch(`http://localhost:8001/${div.id}`,{
                         method: 'DELETE',
                         mode: 'cors',
                     })
-                    this.readTodos();
+                    .then(res=>{
+                      State.Data=State.Data.filter(item=>{
+                           if(item.id+""!==div.id){
+                                return item;
+                           }
+                       })
+                       this.readTodos();
+                    })
+        
                     
                 })
                 

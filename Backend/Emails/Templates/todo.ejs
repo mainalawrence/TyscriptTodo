@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task To do</title>
+</head>
+<style>
+    *{
+        margin: 0px;
+    }
+    .container {
+        width: 100%;
+        margin: auto;
+        padding-bottom: 50px;
+    }
+    .login-btn{
+        background-color: crimson;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 10px;
+        font-size: 18px;
+    }
+</style>
+<body>
+    <table class="container">
+      <tr>
+          <td>
+              <table width="600" style="margin: auto;">
+                 <tr>
+                 
+                 </tr>
+               </table>
+          </td>
+      </tr>
+      <tr>
+          <td style="padding: 20px;">
+            <table width="600" style="margin: auto;">
+                <tr>
+                    <td>
+                        <img src="https://cdn.pixabay.com/photo/2020/08/10/14/17/hummingbird-5477966__340.jpg" alt="bird"/>
+                        <h2 style="font-size: 35px;">Assigned to <%=Todos.assignto%> Make sure this is,</h2>
+                        <h2 style="font-size: 35px;">if not just ignore this email</h2>
+                        <br>
+                        <hr>
+                        <h1>Your Task Is </h1>
+                        <h6> <%=Todos.title%> </h6>
+                        <h1>More Details</h1>
+                        <h6> <%=Todos.details%> </h6>
+                        <h1>The dask should be done by end of</h1>
+                        <h6> <%=Todos.date%> </h6>
+                        <p style="color: black;font-size: 30px; margin: 10px 0px;font-weight: 400;">Welcome to the Jitu Training </p>
+                        <p style="color: black;font-size: 20px;Margin: 10px 0px;font-weight: 400; max-width: 500px;">Training Starts On Monday </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+      </tr>
+      <tr>
+          <td>
+              <table width="600" style="margin: auto;">
+                
+            </table>
+          </td>
+      </tr>
+    </table>
+</body>
+</html>

@@ -70,7 +70,7 @@ var Controller = /** @class */ (function (_super) {
                 var p = document.createElement('p');
                 p.textContent = item.details;
                 var small = document.createElement('small');
-                small.textContent = _this.date.value + "completed at " + Date().toString();
+                small.textContent = "completed at " + Date().toString();
                 var btndiv = document.createElement('div');
                 var btndelete = document.createElement('input');
                 btndelete.className = "btnd";
@@ -109,12 +109,18 @@ var Controller = /** @class */ (function (_super) {
                         _this.readTodos();
                     });
                     btndelete.addEventListener('click', function (e) {
-                        _this.readTodos();
                         fetch("http://localhost:8001/".concat(div.id), {
                             method: 'DELETE',
                             mode: 'cors'
+                        })
+                            .then(function (res) {
+                            State.Data = State.Data.filter(function (item) {
+                                if (item.id + "" !== div.id) {
+                                    return item;
+                                }
+                            });
+                            _this.readTodos();
                         });
-                        _this.readTodos();
                     });
                 }
             });
@@ -124,6 +130,7 @@ var Controller = /** @class */ (function (_super) {
         _this.title = document.getElementById('title');
         _this.textarea = document.getElementById('textarea');
         _this.date = document.getElementById('date');
+        _this.asignto = document.getElementById("asignto");
         _this.form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (_this.title.value === "" || _this.textarea.value === "" || _this.date.value === "") {
@@ -133,10 +140,12 @@ var Controller = /** @class */ (function (_super) {
                 e.preventDefault();
                 var newtodo_1 = {};
                 newtodo_1.complete = false;
+                newtodo_1.assignto = _this.asignto.value;
                 newtodo_1.date = _this.date.value;
                 newtodo_1.details = _this.textarea.value;
                 newtodo_1.title = _this.title.value;
                 newtodo_1.id = State.Data.length + 1;
+                console.log("Asigned to :" + _this.asignto.value);
                 fetch("http://localhost:8001/", {
                     method: 'POST',
                     mode: 'cors',
@@ -149,7 +158,8 @@ var Controller = /** @class */ (function (_super) {
                             title: newtodo_1.title,
                             details: newtodo_1.details,
                             complete: newtodo_1.complete,
-                            mdate: newtodo_1.date
+                            mdate: newtodo_1.date,
+                            assignto: newtodo_1.assignto
                         }
                     })
                 }).then(function (res) {

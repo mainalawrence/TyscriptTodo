@@ -9,6 +9,7 @@ const cors_1 = __importDefault(require("cors"));
 const Database_1 = __importDefault(require("./Database"));
 const mssql_1 = __importDefault(require("mssql"));
 dotenv_1.default.config();
+const email_1 = __importDefault(require("./Emails/email"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -52,13 +53,15 @@ app.delete("/:id", async (req, res) => {
 });
 app.post("/", async (req, res) => {
     try {
-        const { id, title, details, complete, mdate } = req.body.data;
+        const { id, title, details, complete, mdate, assignto } = req.body.data;
+        console.log(req.body.data);
         let pool = await mssql_1.default.connect(Database_1.default);
         let result = await pool.request()
-            .query(`insert into todos values(${id},'${title}','${details}',${complete ? 1 : 0},'${mdate}');`)
+            .query(`insert into todos values(${id},'${title}','${details}',${complete ? 1 : 0},'${mdate}','${assignto}');`)
             .catch(err => {
             res.json(err);
         });
+        await (0, email_1.default)(req.body.data);
         return res.json(result);
     }
     catch (error) {
